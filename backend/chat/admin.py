@@ -10,5 +10,5 @@ class RoomAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
     list_display = ("user", "room", "text", "timestamp")
     list_filter = ("room", "user")
-    search_fields = ("text,")
+    search_fields = ("text",)
 
