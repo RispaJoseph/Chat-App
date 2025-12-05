@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/chat/', include('chat.urls')),
 
     # Users App
-    path('api/users/', include('user.urls')),
+    path('api/users/', include('users.urls')),
 
     # JWT Authentication endpoints
     path('api/token/', TokenObtainPairView.as_view, name='token_obtain_pair'),
