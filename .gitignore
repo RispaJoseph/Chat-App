@@ -26,3 +26,7 @@ db.sqlite3
 # node / build
 node_modules/
 dist/
+
+
+# sql
+.sql
