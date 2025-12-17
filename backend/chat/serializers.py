@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils.text import slugify
 from .models import Room, Message
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -11,6 +12,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     last_message = serializers.SerializerMethodField()
+    slug = serializers.ReadOnlyField()
+    created_by = serializers.ReadOnlyField(source="created_by.username")
 
     class Meta:
         model = Room
@@ -19,3 +22,8 @@ class RoomSerializer(serializers.ModelSerializer):
     def get_last_message(self, obj):
         msg = obj.messages.order_by("-timestamp").first()
         return MessageSerializer(msg).data if msg else None
+    
+    def create(self, validate_data):
+        name = validate_data["name"]
+        validate_data["slug"] = slugify(name)
+        return super().create(validate_data)
