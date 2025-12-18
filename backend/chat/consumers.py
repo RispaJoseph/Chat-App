@@ -8,13 +8,13 @@ User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_slug = self.scope["url_route"]["kwargs"]["room_slug"]
+        self.room_slug = self.scope["url_route"]["kwargs"]["slug"]
         self.group_name = f"chat_{self.room_slug}"
 
-        user = self.scope.get("user")
-        if not user or user.is_anonymous:
-            await self.close(code=4001)
-            return
+        # user = self.scope.get("user")
+        # if not user or user.is_anonymous:
+        #     await self.close(code=4001)
+        #     return
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
@@ -29,7 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         msg = await self.create_message(user.id, self.room_slug, message)
 
         payload = {
-            "type": "chat.message",
+            "type": "chat_message",
             "message": msg.text,
             "username": user.username,
             "timestamp": msg.timestamp.isoformat(),
