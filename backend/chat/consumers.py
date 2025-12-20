@@ -25,14 +25,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message = data.get("message")
-        user = self.scope["user"]
-        msg = await self.create_message(user.id, self.room_slug, message)
+        # user = self.scope["user"]
+        # msg = await self.create_message(user.id, self.room_slug, message)
+        user = self.scope.get("user")
 
+        if user is None or user.is_anonymous:
+            username = "guest"
+            msg = None
+        else:
+            msg = await self.create_message(user.id, self.room_slug, message)
+            username = user.username
+
+
+        # payload = {
+        #     "type": "chat_message",
+        #     "message": msg.text,
+        #     "username": user.username,
+        #     "timestamp": msg.timestamp.isoformat(),
+        # }
+        
         payload = {
             "type": "chat_message",
-            "message": msg.text,
-            "username": user.username,
-            "timestamp": msg.timestamp.isoformat(),
+            "message": message,
+            "username": username,
+            "timestamp": msg.timestamp.isoformat() if msg else None,
         }
         await self.channel_layer.group_send(self.group_name, payload)
 
@@ -43,8 +59,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "timestamp": event["timestamp"],
         }))
 
+    # @database_sync_to_async
+    # def create_message(self, user_id, room_slug, text):
+    #     room, _ = Room.objects.get_or_create(slug=room_slug, defaults={"name":room_slug})
+    #     user = User.objects.get(pk=user_id)
+    #     return Message.objects.create(room=room, user=user, text=text)
+
+
     @database_sync_to_async
     def create_message(self, user_id, room_slug, text):
-        room, _ = Room.objects.get_or_create(slug=room_slug, defaults={"name":room_slug})
+        if not user_id:
+            return None
+
+        room, _ = Room.objects.get_or_create(
+            slug=room_slug,
+            defaults={"name": room_slug}
+        )
         user = User.objects.get(pk=user_id)
         return Message.objects.create(room=room, user=user, text=text)
