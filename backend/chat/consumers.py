@@ -38,12 +38,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             username = user.username
 
 
-        # payload = {
-        #     "type": "chat_message",
-        #     "message": msg.text,
-        #     "username": user.username,
-        #     "timestamp": msg.timestamp.isoformat(),
-        # }
         
         payload = {
             "type": "chat_message",
