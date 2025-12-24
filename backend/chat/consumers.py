@@ -11,7 +11,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_slug = self.scope["url_route"]["kwargs"]["slug"]
         self.group_name = f"chat_{self.room_slug}"
 
-        user = self.scope["user"]
+        user = self.scope.get("user")
         if not user or user.is_anonymous:
             await self.close(code=4001)
             return
@@ -20,32 +20,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
 
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message = data.get("message")
-        # user = self.scope["user"]
-        # msg = await self.create_message(user.id, self.room_slug, message)
-        user = self.scope.get("user")
 
-        if user is None or user.is_anonymous:
-            username = "guest"
-            msg = None
-        else:
-            msg = await self.create_message(user.id, self.room_slug, message)
-            username = user.username
+        user = self.scope["user"]
+        msg = await self.create_message(user.id, self.room_slug, message)
 
-
-        
         payload = {
             "type": "chat_message",
-            "message": message,
-            "username": username,
-            "timestamp": msg.timestamp.isoformat() if msg else None,
+            "message": msg.text,
+            "username": user.username,
+            "timestamp": msg.timestamp.isoformat(),
         }
+
         await self.channel_layer.group_send(self.group_name, payload)
+
+
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
