@@ -12,12 +12,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.group_name = f"chat_{self.room_slug}"
 
         user = self.scope.get("user")
-        if not user or user.is_anonymous:
+        if not user or not user.is_authenticated:
             await self.close(code=4001)
             return
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
+
 
 
 
