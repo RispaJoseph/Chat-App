@@ -50,11 +50,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "timestamp": event["timestamp"],
         }))
 
-    # @database_sync_to_async
-    # def create_message(self, user_id, room_slug, text):
-    #     room, _ = Room.objects.get_or_create(slug=room_slug, defaults={"name":room_slug})
-    #     user = User.objects.get(pk=user_id)
-    #     return Message.objects.create(room=room, user=user, text=text)
 
 
     @database_sync_to_async
