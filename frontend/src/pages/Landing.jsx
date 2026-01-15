@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { HiUserGroup } from "react-icons/hi";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import { MdGroups } from "react-icons/md";
+import { AiOutlinePlusCircle, AiOutlineThunderbolt, AiOutlineLock } from "react-icons/ai";
 
 
 import Navbar from "../components/Navbar";
@@ -105,49 +106,53 @@ export default function Landing() {
 
             {/* ================= WHY CHOOSE ================= */}
             <section
-                id="why"
-                className="
-          min-h-screen
-          scroll-mt-[80px]
-          flex
-          flex-col
-          justify-start
-          pt-24
-          bg-[#111827]
-          px-6
-        "
-            >
-                <h2 className="text-3xl font-semibold text-center mb-24">
-                    Why Choose BuzzTalk?
-                </h2>
+  id="why"
+  className="
+    min-h-screen
+    scroll-mt-[80px]
+    flex
+    flex-col
+    justify-start
+    pt-24
+    bg-[#111827]
+    px-6
+  "
+>
+  <h2 className="text-3xl font-semibold text-center mb-24">
+    Why Choose BuzzTalk?
+  </h2>
 
-                <div className="grid md:grid-cols-3 gap-20 max-w-6xl mx-auto">
-                    <div className="text-center">
-                        <div className="text-5xl mb-5 text-[#ffb703]">👥</div>
-                        <h4 className="font-semibold mb-3">Community Driven</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            Engage in meaningful conversations with a growing global
-                            community.
-                        </p>
-                    </div>
+  <div className="grid md:grid-cols-3 gap-20 max-w-6xl mx-auto">
+    {/* Community */}
+    <div className="text-center">
+      <MdGroups className="text-5xl mb-5 text-[#ffb703] mx-auto" />
+      <h4 className="font-semibold mb-3">Community Driven</h4>
+      <p className="text-gray-400 text-sm leading-relaxed">
+        Engage in meaningful conversations with a growing global
+        community.
+      </p>
+    </div>
 
-                    <div className="text-center">
-                        <div className="text-5xl mb-5 text-[#ffb703]">⚡</div>
-                        <h4 className="font-semibold mb-3">Fast & Real-Time</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            Built with WebSockets for instant, lag-free messaging.
-                        </p>
-                    </div>
+    {/* Fast */}
+    <div className="text-center">
+      <AiOutlineThunderbolt className="text-5xl mb-5 text-[#ffb703] mx-auto" />
+      <h4 className="font-semibold mb-3">Fast & Real-Time</h4>
+      <p className="text-gray-400 text-sm leading-relaxed">
+        Built with WebSockets for instant, lag-free messaging.
+      </p>
+    </div>
 
-                    <div className="text-center">
-                        <div className="text-5xl mb-5 text-[#ffb703]">🔒</div>
-                        <h4 className="font-semibold mb-3">Secure & Private</h4>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            Authenticated chats with secure communication.
-                        </p>
-                    </div>
-                </div>
-            </section>
+    {/* Secure */}
+    <div className="text-center">
+      <AiOutlineLock className="text-5xl mb-5 text-[#ffb703] mx-auto" />
+      <h4 className="font-semibold mb-3">Secure & Private</h4>
+      <p className="text-gray-400 text-sm leading-relaxed">
+        Authenticated chats with secure communication.
+      </p>
+    </div>
+  </div>
+</section>
+
 
             {/* ================= FOOTER ================= */}
             <footer className="text-center text-gray-500 text-sm py-10">
