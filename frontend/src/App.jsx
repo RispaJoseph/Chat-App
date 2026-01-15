@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Rooms from "./pages/Rooms";
 import CreateRoom from "./pages/CreateRoom";
+import ChatRoom from "./pages/ChatRoom";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/rooms" element={<Rooms />} />
         <Route path="/create-room" element={<CreateRoom />} />
+        <Route path="/room/:id" element={<ChatRoom />} />
 
       </Routes>
     </BrowserRouter>
