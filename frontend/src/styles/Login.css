@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap");
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+}
+
+.login-root {
+    min-height: 100vh;
+    width: 100%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+
+/* CARD */
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* HEADER */
+
+.login-header {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    padding: 42px 26px 60px;
+    color: white;
+    border-bottom-left-radius: 160px;
+}
+
+.login-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.login-header p {
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+
+/* BODY */
+
+.login-body {
+    padding: 28px 26px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.login-body input {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.login-body input::placeholder {
+    color: #9ca3af;
+}
+
+.login-body input:focus {
+    outline: none;
+    border-color: #f59e0b;
+}
+
+
+/* FORGOT */
+
+.forgot {
+    font-size: 12px;
+    text-align: right;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+
+/* BUTTON */
+
+.login-button {
+    margin-top: 8px;
+    height: 48px;
+    border-radius: 24px;
+    background: #fbbf24;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.login-button:hover {
+    background: #f59e0b;
+}
+
+
+/* SIGNUP */
+
+.signup-text {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.signup-text span {
+    color: #f59e0b;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* 🔥 RESPONSIVE FIXES */
+
+@media (max-height: 700px) {
+    .login-header {
+        padding: 32px 24px 44px;
+        border-bottom-left-radius: 120px;
+    }
+    .login-header h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-card {
+        border-radius: 20px;
+    }
+    .login-header {
+        padding: 28px 20px 40px;
+    }
+    .login-body {
+        padding: 22px 20px 26px;
+    }
+}
