@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { socket } from "../socket";
 import {
   HiArrowLeft,
   HiPaperAirplane,
@@ -13,11 +14,14 @@ export default function ChatRoom() {
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
-  const typingTimerRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
   const [showEmoji, setShowEmoji] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const emojis = ["😀", "😂", "😍", "😎", "🔥", "👍", "🎉"];
 
   const users = [
     { name: "Alice", online: true },
@@ -25,89 +29,83 @@ export default function ChatRoom() {
     { name: "You", online: true },
   ];
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      user: "Alice",
-      text: "Hey everyone!",
-      time: "10:30 AM",
-    },
-    {
-      id: 2,
-      user: "Bob",
-      text: "Welcome!",
-      time: "10:31 AM",
-    },
-    {
-      id: 3,
-      user: "You",
-      text: "Hi Alice 👋",
-      time: "10:32 AM",
-    },
-  ]);
+  /* 🔌 SOCKET CONNECTION */
+  useEffect(() => {
+    socket.connect();
 
-  const emojis = ["😀", "😂", "😍", "😎", "🔥", "👍", "🎉"];
+    socket.emit("join_room", { roomId: id });
 
-  /* ✅ Auto scroll (this effect is correct) */
+    socket.on("receive_message", (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    socket.on("typing", () => {
+      setIsTyping(true);
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+      }, 1000);
+    });
+
+    return () => {
+      socket.off("receive_message");
+      socket.off("typing");
+      socket.disconnect();
+    };
+  }, [id]);
+
+  /* 🔽 AUTO SCROLL */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  /* ✅ Handle typing (NO useEffect misuse) */
+  /* ✍️ HANDLE TYPING */
   const handleTyping = (e) => {
     setMessage(e.target.value);
-    setIsTyping(true);
-
-    clearTimeout(typingTimerRef.current);
-    typingTimerRef.current = setTimeout(() => {
-      setIsTyping(false);
-    }, 1000);
+    socket.emit("typing", { roomId: id });
   };
 
+  /* 📤 SEND MESSAGE */
   const sendMessage = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        user: "You",
-        text: message,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      },
-    ]);
+    const messageData = {
+      roomId: id,
+      user: "You",
+      text: message,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
 
+    socket.emit("send_message", messageData);
     setMessage("");
-    setIsTyping(false);
     setShowEmoji(false);
   };
 
+  /* 😊 EMOJI */
   const handleEmojiClick = (emoji) => {
     setMessage((prev) => prev + emoji);
   };
 
+  /* 🖼 IMAGE UPLOAD (local preview for now) */
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const imageURL = URL.createObjectURL(file);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        user: "You",
-        image: imageURL,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      },
-    ]);
+    socket.emit("send_message", {
+      roomId: id,
+      user: "You",
+      image: imageURL,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
   };
 
   return (
@@ -129,7 +127,7 @@ export default function ChatRoom() {
                 className={`w-2 h-2 rounded-full ${
                   user.online ? "bg-green-400" : "bg-gray-500"
                 }`}
-              ></span>
+              />
               <span className="text-sm">{user.name}</span>
             </div>
           ))}
@@ -152,9 +150,9 @@ export default function ChatRoom() {
 
         {/* MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-          {messages.map((msg) => (
+          {messages.map((msg, index) => (
             <div
-              key={msg.id}
+              key={index}
               className={`flex ${
                 msg.user === "You" ? "justify-end" : "justify-start"
               }`}
@@ -162,9 +160,8 @@ export default function ChatRoom() {
               <div
                 className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl text-sm ${
                   msg.user === "You"
-                  ? "bg-[#2c256b] text-white rounded-br-none"
-                  : "bg-[#1f2937] rounded-bl-none"
-
+                    ? "bg-indigo-600 text-white rounded-br-none"
+                    : "bg-[#1f2937] rounded-bl-none"
                 }`}
               >
                 {msg.user !== "You" && (
@@ -190,7 +187,6 @@ export default function ChatRoom() {
             </div>
           ))}
 
-          {/* Typing indicator */}
           {isTyping && (
             <div className="text-xs text-gray-400 italic">
               Someone is typing...
